@@ -8,6 +8,7 @@
 
 #import "MSScanQRCodeController.h"
 #import "MSScanQRCodeView.h"
+#import <Photos/Photos.h>
 
 @interface MSScanQRCodeController ()<UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 
@@ -36,6 +37,25 @@
     [self addCancelBtn];
 }
 
+#pragma mark -- 相册权限判断
+- (void)albumPermissions {
+    PHAuthorizationStatus status = [PHPhotoLibrary authorizationStatus];
+    if (status == PHAuthorizationStatusRestricted || status == PHAuthorizationStatusDenied){
+        [self showAlert:@"请您设置允许APP访问您的相册\n设置>隐私>照片"];
+    } else if (status == PHAuthorizationStatusNotDetermined){
+        [PHPhotoLibrary requestAuthorization:^(PHAuthorizationStatus status) {
+            if (status == PHAuthorizationStatusRestricted || status == PHAuthorizationStatusDenied) {
+                [self showAlert:@"请您设置允许APP访问您的相册\n设置>隐私>照片"];
+            }
+            else {
+                [self presentPhotoLibrary];
+            }
+        }];
+    } else {
+        [self presentPhotoLibrary];
+    }
+}
+
 #pragma mark -- 打开相册
 - (void)presentPhotoLibrary {
     UIImagePickerController*imagePicker = [[UIImagePickerController alloc] init];
@@ -60,13 +80,13 @@
     }
     else {
         [picker dismissViewControllerAnimated:YES completion:^{
-            [self showAlert];
+            [self showAlert:@"图片解析失败，换个图片试试"];
         }];
     }
 }
 
-- (void)showAlert {
-    UIAlertController *alertC = [UIAlertController alertControllerWithTitle:nil message:@"图片解析失败，换个图片试试" preferredStyle:UIAlertControllerStyleAlert];
+- (void)showAlert: (NSString *)msg {
+    UIAlertController *alertC = [UIAlertController alertControllerWithTitle:nil message:msg preferredStyle:UIAlertControllerStyleAlert];
     UIAlertAction *cancelA = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleCancel handler:nil];
     [alertC addAction:cancelA];
     [self presentViewController:alertC animated:YES completion:nil];
