@@ -8,9 +8,13 @@
 
 #import "ViewController.h"
 #import "MSScanQRCodeController.h"
+#import "MSScanQRCodeCreate.h"
 
 @interface ViewController ()
-
+{
+    UITextField *codeField;
+    UIImageView *imgV;
+}
 @end
 
 @implementation ViewController
@@ -21,11 +25,46 @@
     
     UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
     [btn setTitle:@"扫一扫" forState:UIControlStateNormal];
-    [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    [btn setFrame:CGRectMake(0, 0, 100, 40)];
-    [btn setCenter:CGPointMake(self.view.center.x, self.view.center.y)];
+    [btn setFrame:CGRectMake(0, 0, 200, 40)];
+    [btn setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
+    [btn.layer setCornerRadius:6.0];
+    [btn setBackgroundColor:[UIColor redColor]];
+    [btn setCenter:CGPointMake(self.view.center.x, 130)];
     [btn addTarget:self action:@selector(btnClicked) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:btn];
+    
+    codeField = [[UITextField alloc] initWithFrame:CGRectMake(0, 0, 200, 40)];
+    codeField.center = CGPointMake(self.view.center.x, btn.center.y + 80);
+    codeField.borderStyle = UITextBorderStyleRoundedRect;
+    codeField.text = @"Hello World";
+    codeField.keyboardType = UIKeyboardTypeNumbersAndPunctuation;
+    codeField.clearButtonMode = UITextFieldViewModeWhileEditing;
+    codeField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
+    codeField.textAlignment = NSTextAlignmentCenter;
+    [self.view addSubview:codeField];
+    
+    UIButton  *codeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    codeBtn.frame = CGRectMake(codeField.frame.origin.x ,CGRectGetMaxY(codeField.frame) + 40, 200, 40);
+    [codeBtn setTitle:@"生成二维码" forState:UIControlStateNormal];
+    [codeBtn setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
+    [codeBtn.layer setCornerRadius:6.0];
+    [codeBtn setBackgroundColor:[UIColor redColor]];
+    [codeBtn addTarget:self action:@selector(createCodeClicked:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:codeBtn];
+    
+    imgV = [[UIImageView alloc] initWithFrame:CGRectMake(60, CGRectGetMaxY(codeBtn.frame) + 50, self.view.bounds.size.width -120, self.view.bounds.size.width -120)];
+    imgV.contentMode = UIViewContentModeScaleAspectFill;
+    [self.view addSubview:imgV];
+}
+
+- (void)createCodeClicked: (UIButton *)sebder{
+    [self.view endEditing:YES];
+    NSString *code = codeField.text;
+    if (!code) {
+        [self showAlertMsg:@"请输入code"];
+        return;
+    }
+    imgV.image = [MSScanQRCodeCreate scanQRCodeCreate:code CodeSize:imgV.frame.size.width];
 }
 
 - (void)btnClicked {
