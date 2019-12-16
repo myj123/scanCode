@@ -31,7 +31,7 @@
     self.scanView = [[MSScanQRCodeView alloc] initWithFrame:self.view.frame captureDevice:self.device outsideViewLayer:self.view.layer];
     __weak typeof(self) weakSelf = self;
     self.scanView.block = ^(void) {
-        [weakSelf presentPhotoLibrary];
+        [weakSelf albumPermissions];
     };
     [self.view addSubview:self.scanView];
     [self addCancelBtn];
