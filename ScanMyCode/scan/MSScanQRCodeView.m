@@ -122,7 +122,7 @@ static CGFloat const timer_animation_Duration = 0.05;
     
     UIView *light_album_view = [[UIView alloc] init];
     if (@available(iOS 11.0, *)) {
-        light_album_view.frame = CGRectMake(0, self.frame.size.height -100 -[UIApplication sharedApplication].delegate.window.safeAreaInsets.bottom, self.frame.size.width, 100);
+        light_album_view.frame = CGRectMake(0, self.frame.size.height -100 -[UIApplication sharedApplication].delegate.window.safeAreaInsets.bottom, self.frame.size.width, 100 +[UIApplication sharedApplication].delegate.window.safeAreaInsets.bottom);
     } else {
         light_album_view.frame = CGRectMake(0, self.frame.size.height -100, self.frame.size.width, 100);
     }
@@ -276,8 +276,6 @@ static CGFloat const timer_animation_Duration = 0.05;
     [self.animation_line removeFromSuperview];
     self.animation_line = nil;
 }
-
-
 
 @end
 
